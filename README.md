@@ -108,11 +108,9 @@ RapidGateway:
 
 ## TODO
 
-* Form validation in Rapid::PayForm()
 * Translation support
 * Unit tests
 * Capture customer and order information and pass to the gateway
 * Test error responses in RapidGateway::process()
-
 
 

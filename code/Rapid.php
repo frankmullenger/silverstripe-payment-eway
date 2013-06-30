@@ -41,6 +41,7 @@ class Rapid extends Page_Controller {
 			$cvnField = TextField::create('EWAY_CARDCVN', 'CVN Number')
 		);
 		
+		//Test data
 		if (Director::isDev()) {
 			$nameField->setValue('Test User');
 			$numberField->setValue('4444333322221111');
@@ -48,8 +49,6 @@ class Rapid extends Page_Controller {
 			$expYearField->setValue(date('y') + 1);
 			$cvnField->setValue('123');
 		}
-		
-		//TODO Validation on form fields
 
 		$actions = new FieldList(
 			FormAction::create('', 'Process')	
