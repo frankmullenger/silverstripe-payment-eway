@@ -69,6 +69,40 @@ RapidGateway:
     ShowDebugInfo: 0
 ```
 
+By default the gateway class can accept NZD or AUD (see RapidGateway::$supportedCurrencies). Usually your Eway account will be for a single currency that matches your merchant account. To specify this currency as the single acceptable currency alter the YAML config file e.g: a configuration that will only process payments in Australian dollars:
+
+```yaml
+RapidGateway:
+  live:
+    # User credentials
+    Payment.Username: ""
+    Payment.Password: ""
+
+    #Method Options: SOAP,POST,REST,RPC
+    "Request:Method": 'SOAP'
+
+    #Format Options: JSON, XML
+    "Request:Format": 'JSON'
+
+    # Set supported currency
+    supported_currencies:
+      'AUD' : 'Australian Dollar'
+  dev:
+    # User credentials
+    Payment.Username: ""
+    Payment.Password: ""
+
+    #Method Options: SOAP,POST,REST,RPC
+    "Request:Method": 'SOAP'
+
+    #Format Options: JSON, XML
+    "Request:Format": 'JSON'
+
+    # Set supported currency
+    supported_currencies:
+      'AUD' : 'Australian Dollar'
+```
+
 **Note:** Remember to ?flush=1 after changes to the config YAML files.
 
 

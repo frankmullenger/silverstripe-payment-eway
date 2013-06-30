@@ -6,7 +6,8 @@ require(dirname(__FILE__).'/../thirdparty/Rapid3.0.php');
 class RapidGateway extends PaymentGateway_GatewayHosted { 
 	
 	protected $supportedCurrencies = array(
-		'NZD' => 'New Zealand Dollar'
+		'NZD' => 'New Zealand Dollar',
+		'AUD' => 'Australian Dollar'
 	);
 	
 	public function __construct() {
@@ -128,6 +129,15 @@ class RapidGateway extends PaymentGateway_GatewayHosted {
 		
 		return $errors;
 	}
+	
+	public function getSupportedCurrencies() {
+
+    $config = $this->getConfig();
+    if (isset($config['supported_currencies'])) {
+      $this->supportedCurrencies = $config['supported_currencies'];
+    }
+    return $this->supportedCurrencies;
+  }
 }
 
 class RapidGateway_Mock extends RapidGateway { 
