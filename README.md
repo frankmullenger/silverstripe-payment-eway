@@ -10,11 +10,19 @@
 * Payment module 1.0.x
 
 ## Documentation
-Paystation integration for payment module. This module currently supports [Rapid 3.0 processing](http://www.eway.co.nz/developers/api/rapid-3-0) only.
+Paystation integration for payment module. This module currently supports [Rapid 3.0 processing](http://www.eway.co.nz/developers/api/rapid-3-0) only. The Rapid 3.0 API works by using a form hosted on the merchants website to capture the credit card details, this form is posted directly to eWay. 
+
+### Developer documentation
+How to [get started with the Rapid 3.0 API](https://eway.zendesk.com/entries/22370486-how-to-generate-your-sandbox-rapid-3-0-api-key-and-password).  
+[Rapid 3.0 API documentation](http://www.eway.co.nz/docs/api-documentation/rapid3-0documentation.pdf).  
+[Gateway response codes](http://www.eway.com.au/developers/resources/response-codes).  
+[How to trigger response codes from the gateway using cents values](https://eway.zendesk.com/entries/23054328-I-m-testing-in-sandbox-why-are-my-payments-declined-).  
 
 ## Installation Instructions
 1. Place this directory in the root of your SilverStripe installation and call it 'payment-eway'.
 2. Visit yoursite.com/dev/build?flush=1 to rebuild the database.
+
+**Note:** Because the credit card details are entered by the customer on a page residing on your website (and not a page on the gateway) ensure you have an SSL/TLS cert installed for security.
 
 ## Usage Overview
 Enable in your application YAML config (e.g: mysite/_config/payment.yaml):
@@ -63,8 +71,14 @@ RapidGateway:
 
 **Note:** Remember to ?flush=1 after changes to the config YAML files.
 
+
 ## TODO
 
 * Form validation in Rapid::PayForm()
 * Translation support
+* Unit tests
+* Capture customer and order information and pass to the gateway
+* Test error responses in RapidGateway::process()
+
+
 

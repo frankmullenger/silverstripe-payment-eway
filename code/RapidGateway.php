@@ -61,28 +61,25 @@ class RapidGateway extends PaymentGateway_GatewayHosted {
 
 		//Check if any error returns
 		if (isset($result->Errors)) {
-		// if($errors = $this->getErrors($result)) {
-			
-			//TODO: Save these errors onto the Payment object
 
 			//Get Error Messages from Error Code. Error Code Mappings are in the Config.ini file
-			$ErrorArray = explode(",", $result->Errors);
-			
+			$errorArray = explode(",", $result->Errors);
 			$lblError = "";
 			
-			foreach ( $ErrorArray as $error ) {
+			foreach ( $errorArray as $error ) {
 				
-			    if(isset($service->APIConfig[$error]))
-			        $lblError .= $error." ".$service->APIConfig[$error]."<br>";
-			    else
-			        $lblError .= $error;
+				if (isset($service->APIConfig[$error])) {
+					$lblError .= $error." ".$service->APIConfig[$error]."<br>";
+				}  
+				else {
+					$lblError .= $error;
+				}   
 			}
 			
-			return new PaymentGateway_Failure($lblError);
+			return new PaymentGateway_Failure(null, array($lblError));
 		} 
 		else {
-			
-			//TODO Use SilverStripe Session class
+
 			Session::set('EwayResponse', $result);
 
 			$postData = array(
