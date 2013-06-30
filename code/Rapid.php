@@ -20,9 +20,8 @@ class Rapid extends Page_Controller {
 	 * Return the payment form
 	 */
 	public function PayForm() {
+		
 		$request = $this->getRequest();
-
-		//TODO Use SilverStripe Session class
 		$response = Session::get('EwayResponse');
 		
 		$months = array('01','02','03','04','05','06','07','08','09','10','11','12');
@@ -32,7 +31,7 @@ class Rapid extends Page_Controller {
 			HiddenField::create('EWAY_ACCESSCODE', '', $response->AccessCode),
 			TextField::create('EWAY_CARDNAME', 'Card holder', 'Test User'),
 			TextField::create('EWAY_CARDNUMBER', 'Card Number', '4444333322221111'),
-			DropdownField::create('EWAY_CARDEXPIRYMONTH', 'Expiry Month', array_combine($months, $months)),
+			DropdownField::create('EWAY_CARDEXPIRYMONTH', 'Expiry Month', array_combine($months, $months), '12'),
 			DropdownField::create('EWAY_CARDEXPIRYYEAR', 'Expiry Year', array_combine($years, $years)),
 
 			// TextField::create('EWAY_CARDSTARTMONTH', 'Valid from month', ''), //UK only

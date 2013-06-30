@@ -25,6 +25,7 @@ class RapidGateway extends PaymentGateway_GatewayHosted {
 			}
 			
 			$this->config = array_merge(
+				Config::inst()->get(get_class($this), 'response_codes'),
 				Config::inst()->get(get_class($this), 'error_codes'),
 				$config
 			);
@@ -45,35 +46,39 @@ class RapidGateway extends PaymentGateway_GatewayHosted {
 		//Note: TotalAmount is a Required Field When Process a Payment, TotalAmount should set to "0" or leave EMPTY when Create/Update A TokenCustomer
 		$request->Payment->TotalAmount = $data['Amount'] * 100; //Total amount is in cents
 		$request->Payment->CurrencyCode = $data['Currency'];
-		
+
 		//Url to the page for getting the result with an AccessCode
 		//Note: RedirectUrl is a Required Field For all cases
 		$request->RedirectUrl = $this->returnURL;
 
 		//Method for this request. e.g. ProcessPayment, Create TokenCustomer, Update TokenCustomer & TokenPayment
 		$request->Method = 'ProcessPayment';
+		
+		//TODO Hook for setting data on request
 
 		//Call RapidAPI
 		$result = $service->CreateAccessCode($request);
 
 		//Check if any error returns
-		if(isset($result->Errors)) {
+		if (isset($result->Errors)) {
+		// if($errors = $this->getErrors($result)) {
 			
 			//TODO: Save these errors onto the Payment object
-			return new PaymentGateway_Failure();
-			
+
 			//Get Error Messages from Error Code. Error Code Mappings are in the Config.ini file
-			// $ErrorArray = explode(",", $result->Errors);
+			$ErrorArray = explode(",", $result->Errors);
 			
-			// $lblError = "";
+			$lblError = "";
 			
-			// foreach ( $ErrorArray as $error ) {
+			foreach ( $ErrorArray as $error ) {
 				
-			//     if(isset($service->APIConfig[$error]))
-			//         $lblError .= $error." ".$service->APIConfig[$error]."<br>";
-			//     else
-			//         $lblError .= $error;
-			// }
+			    if(isset($service->APIConfig[$error]))
+			        $lblError .= $error." ".$service->APIConfig[$error]."<br>";
+			    else
+			        $lblError .= $error;
+			}
+			
+			return new PaymentGateway_Failure($lblError);
 		} 
 		else {
 			
@@ -105,27 +110,26 @@ class RapidGateway extends PaymentGateway_GatewayHosted {
 		//Call RapidAPI to get the result
 		$result = $service->GetAccessCodeResult($rapidRequest);
 
-		if(isset($result->Errors)) {
-			
-			//TODO: Save these errors onto the Payment object
-			return new PaymentGateway_Failure();
-			
-			//Get Error Messages from Error Code. Error Code Mappings are in the Config.ini file
-			// $ErrorArray = explode(",", $result->Errors);
-
-			// var_dump($ErrorArray);
-
-			// $lblError = "";
-
-			// foreach ( $ErrorArray as $error )
-			// {
-			//     $lblError .= $service->APIConfig[$error]."<br>";
-			// }
+		//Save these errors onto the Payment object
+		if($errors = $this->getErrors($result)) {
+			return new PaymentGateway_Failure(null, $errors);
 		}
 		else {
 			return new PaymentGateway_Success();
 		}
-
+	}
+	
+	public function getErrors($result) {
+		
+		$errors = array();
+		$config = $this->getConfig();
+		
+		$successCodes = array('00', '08', '10', '11', '16');
+		if (isset($result->ResponseCode) && !in_array($result->ResponseCode, $successCodes)) {
+			$errors[$result->ResponseMessage] = $config[$result->ResponseMessage];
+		}
+		
+		return $errors;
 	}
 }
 
