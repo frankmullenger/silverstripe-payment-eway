@@ -29,17 +29,27 @@ class Rapid extends Page_Controller {
 
 		$fields = new FieldList(
 			HiddenField::create('EWAY_ACCESSCODE', '', $response->AccessCode),
-			TextField::create('EWAY_CARDNAME', 'Card holder', 'Test User'),
-			TextField::create('EWAY_CARDNUMBER', 'Card Number', '4444333322221111'),
-			DropdownField::create('EWAY_CARDEXPIRYMONTH', 'Expiry Month', array_combine($months, $months), '12'),
-			DropdownField::create('EWAY_CARDEXPIRYYEAR', 'Expiry Year', array_combine($years, $years)),
+			$nameField = TextField::create('EWAY_CARDNAME', 'Card holder'),
+			$numberField = TextField::create('EWAY_CARDNUMBER', 'Card Number'),
+			$expMonthField = DropdownField::create('EWAY_CARDEXPIRYMONTH', 'Expiry Month', array_combine($months, $months)),
+			$expYearField = DropdownField::create('EWAY_CARDEXPIRYYEAR', 'Expiry Year', array_combine($years, $years)),
 
 			// TextField::create('EWAY_CARDSTARTMONTH', 'Valid from month', ''), //UK only
 			// TextField::create('EWAY_CARDSTARTYEAR', 'Valid from year', ''), //UK only
 			// TextField::create('EWAY_CARDISSUENUMBER', 'Issue number', ''),
 			
-			TextField::create('EWAY_CARDCVN', 'CVN Number', '123')
+			$cvnField = TextField::create('EWAY_CARDCVN', 'CVN Number')
 		);
+		
+		if (Director::isDev()) {
+			$nameField->setValue('Test User');
+			$numberField->setValue('4444333322221111');
+			$expMonthField->setValue('12');
+			$expYearField->setValue(date('y') + 1);
+			$cvnField->setValue('123');
+		}
+		
+		//TODO Validation on form fields
 
 		$actions = new FieldList(
 			FormAction::create('', 'Process')	
@@ -47,6 +57,8 @@ class Rapid extends Page_Controller {
 
 		$form = new Form($this, 'PayForm', $fields, $actions);
 		$form->setFormAction($response->FormActionURL);
+		
+		$this->extend('updatePayForm', $form);
 		return $form;
 	}
 

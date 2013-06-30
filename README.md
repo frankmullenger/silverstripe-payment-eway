@@ -65,6 +65,6 @@ RapidGateway:
 
 ## TODO
 
-Recording error responses from the gateway on Payment
-
+* Form validation in Rapid::PayForm()
+* Translation support
 
